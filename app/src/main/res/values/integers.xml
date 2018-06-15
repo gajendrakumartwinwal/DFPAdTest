@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <item name="ad_header_height_50" type="integer">50</item>
+    <item name="ad_header_height_30" type="integer">30</item>
+    <item name="ad_header_width_int" type="integer">320</item>
+
+    <item name="ad_footer_width_int" type="integer">480</item>
+    <item name="ad_footer_height_int" type="integer">50</item>
+
+	<item name="ad_mrec_width" type="integer">300</item>
+    <item name="ad_mrec_height" type="integer">250</item>
+	<integer name="photo_feature_percent_width">80</integer>
+
+</resources>
