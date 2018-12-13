@@ -55,8 +55,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         mStop.setOnClickListener(this);
 
         //Repeated callback caller after each 10 sec into {@link #onTimeExpire}
-        mRepeatCaller = new RepeatCaller();
-        getLifecycle().addObserver(mRepeatCaller);
+        mRepeatCaller = new RepeatCaller(getLifecycle());
 
         //Unit id are provided in cyclic manager from {@link UnitIdUtils}
         mUnitIdUtils = new UnitIdUtils();

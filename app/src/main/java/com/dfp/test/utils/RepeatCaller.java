@@ -22,6 +22,13 @@ public class RepeatCaller implements LifecycleObserver {
      */
     private static int DELAY_IN_MIILI = 1000;
     private RepeatCallListener mRepeatCallListener;
+    private final Lifecycle mLifecycle;
+
+    public RepeatCaller(Lifecycle lifecycle) {
+        this.mLifecycle = lifecycle;
+
+        this.mLifecycle.addObserver(this);
+    }
 
     public void registerRepeatCallback(RepeatCallListener repeatCallListener) {
         mRepeatCallListener = repeatCallListener;
@@ -58,6 +65,7 @@ public class RepeatCaller implements LifecycleObserver {
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     public void onDestory() {
         mRepeatCallListener = null;
+        this.mLifecycle.removeObserver(this);
     }
 
     public interface RepeatCallListener {
