@@ -1,203 +1,124 @@
 package com.dfp.test;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
+import com.dfp.test.ads.AdCallbackListener;
+import com.dfp.test.ads.AdManager;
+import com.dfp.test.ads.AdRequest;
+import com.dfp.test.utils.LogUtil;
+import com.dfp.test.utils.RepeatCaller;
+import com.dfp.test.utils.UnitIdUtils;
 import com.google.android.gms.ads.doubleclick.PublisherAdView;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+/**
+ * This activity is subactivity of {@link ActionBarActivity} which creates option menu for ad-report and launch {@link ReportActivity} when user clicks on optoin menu
+ * <p>
+ * This activity make ad call on repeated time period of 1 sec for {@link UnitIdUtils} and 3 ad calls at a time will be called to change this refer to: {@link RepeatCaller}
+ * <p>
+ * Repeated calls are trigged from {@link RepeatCaller}
+ * <p>
+ * Ad calls are made using {@link AdManager}
+ */
+public class MainActivity extends ActionBarActivity implements View.OnClickListener, RepeatCaller.RepeatCallListener, AdCallbackListener {
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    private LinearLayout mAdContainer;
 
-    private PublisherAdView mGoogleAd, mMrecAd;
+    private Button mStart, mStop;
+    private TextView mResponseLog, mCurrentUnitId;
 
-    private Button mGoogleAdButton, mMrecAdButton;
-    private TextView mResponseLog;
+    private UnitIdUtils mUnitIdUtils;
+    private PublisherAdView mPublisherAdView;
+
+    private RepeatCaller mRepeatCaller;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
-
         initViews();
-
-        mGoogleAd.setAdListener(new AdListener() {
-            @Override
-            public void onAdFailedToLoad(int i) {
-                super.onAdFailedToLoad(i);
-                setLogText(false);
-                mGoogleAd.setVisibility(View.INVISIBLE);
-                Log.d("AD_Response", "Google Failed with " + i);
-            }
-
-            @Override
-            public void onAdLoaded() {
-                super.onAdLoaded();
-                setLogText(true);
-                mGoogleAd.setVisibility(View.VISIBLE);
-                Log.d("AD_Response", "Google success");
-            }
-        });
-        mMrecAd.setAdListener(new AdListener() {
-            @Override
-            public void onAdFailedToLoad(int i) {
-                super.onAdFailedToLoad(i);
-                mMrecAd.setVisibility(View.INVISIBLE);
-                Log.d("AD_Response", "MREC Failed with " + i);
-                setLogText(false);
-            }
-
-            @Override
-            public void onAdLoaded() {
-                super.onAdLoaded();
-                mMrecAd.setVisibility(View.VISIBLE);
-                Log.d("AD_Response", "MREC success");
-                setLogText(true);
-            }
-        });
     }
 
     private void initViews() {
-        // Gets the ad view defined in layout/ad_fragment.xml with ad unit ID set in
-        // values/strings.xml.
-        mGoogleAd = findViewById(R.id.ad_view_google);
-        mMrecAd = findViewById(R.id.ad_view_mrec);
+        mAdContainer = findViewById(R.id.ad_view_container);
         mResponseLog = findViewById(R.id.tv_report);
-//        setMrecAdSize();
+        mStart = findViewById(R.id.btn_start);
+        mStop = findViewById(R.id.btn_stop);
+        mCurrentUnitId = findViewById(R.id.current_unitid);
 
-        mGoogleAdButton = findViewById(R.id.google_ad);
-        mMrecAdButton = findViewById(R.id.mrec_ad);
+        //Click listeners giving callback to {@link #onClick}
+        mStart.setOnClickListener(this);
+        mStop.setOnClickListener(this);
 
-        mGoogleAdButton.setOnClickListener(this);
-        mMrecAdButton.setOnClickListener(this);
-        mMrecAdButton.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                Toast.makeText(MainActivity.this, "1. Mrec Ad UnitID:\n" + mMrecAd.getAdUnitId() + "\n2. Size:\n" + mMrecAd.getAdSize().toString(), Toast.LENGTH_LONG).show();
-                return false;
-            }
-        });
-        mGoogleAdButton.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                Toast.makeText(MainActivity.this, "1. Google Ad UnitID:\n" + mMrecAd.getAdUnitId() + "\n2. Size:\n" + mMrecAd.getAdSize().toString(), Toast.LENGTH_LONG).show();
-                return false;
-            }
-        });
+        //Repeated callback caller after each 10 sec into {@link #onTimeExpire}
+        mRepeatCaller = new RepeatCaller();
+        getLifecycle().addObserver(mRepeatCaller);
+
+        //Unit id are provided in cyclic manager from {@link UnitIdUtils}
+        mUnitIdUtils = new UnitIdUtils();
     }
 
-    private void loadGoogleAd() {
-        // Create an ad request. Check logcat output for the hashed device ID to
-        // get test ads on a physical device. e.g.
-        // "Use AdRequest.Builder.addTestDevice("ABCDEF012345") to get test ads on this device."
-        PublisherAdRequest adRequest = new PublisherAdRequest.Builder().build();
-
-        // Start loading the ad in the background.
-        mGoogleAd.loadAd(adRequest);
-    }
-
-    private void loadMrecAd() {
-        // Create an ad request. Check logcat output for the hashed device ID to
-        // get test ads on a physical device. e.g.
-        // "Use AdRequest.Builder.addTestDevice("ABCDEF012345") to get test ads on this device."
-        PublisherAdRequest adRequest = new PublisherAdRequest.Builder().build();
-
-        // Start loading the ad in the background.
-        mMrecAd.loadAd(adRequest);
-    }
-
-    /**
-     * Called when leaving the activity
-     */
-    @Override
-    public void onPause() {
-        if (mGoogleAd != null) {
-            mGoogleAd.pause();
-        }
-        if (mMrecAd != null) {
-            mMrecAd.pause();
-        }
-        super.onPause();
-    }
-
-    /**
-     * Called when returning to the activity
-     */
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (mGoogleAd != null) {
-            mGoogleAd.resume();
-        }
-        if (mMrecAd != null) {
-            mMrecAd.resume();
-        }
-    }
-
-    /**
-     * Called before the activity is destroyed
-     */
-    @Override
-    public void onDestroy() {
-        if (mGoogleAd != null) {
-            mGoogleAd.destroy();
-        }
-        if (mMrecAd != null) {
-            mMrecAd.destroy();
-        }
-        super.onDestroy();
-    }
 
     @Override
     public void onClick(View v) {
-        mResponseLog.setText("Loading Ad...");
         switch (v.getId()) {
-            case R.id.google_ad:
-                loadGoogleAd();
+            case R.id.btn_start:
+                //callback will be giving after each 10 sec into {@link #onTimeExpire} method
+                mRepeatCaller.registerRepeatCallback(this);
                 break;
-            case R.id.mrec_ad:
-                loadMrecAd();
+            case R.id.btn_stop:
+                //callback will be stoped into {@link #onTimeExpire} method
+                mRepeatCaller.unRegisterRepeatCallback(this);
                 break;
         }
     }
 
-    private void setLogText(boolean isSuccess) {
-        try {
-            Process process = Runtime.getRuntime().exec("logcat -d Ads");
-            BufferedReader bufferedReader = new BufferedReader(
-                    new InputStreamReader(process.getInputStream()));
+    @Override
+    public void onTimeExpire() {
+        //Remove all ads if added previously in container
+        mAdContainer.removeAllViews();
 
-            StringBuilder log = new StringBuilder();
-            String line = "";
-            while ((line = bufferedReader.readLine()) != null) {
-                try {
-                    if (line.contains("Ads"))
-                        log.append(line.substring(line.indexOf("Ads")) + "\n");
-                } catch (Exception e) {
-                }
-            }
-            mResponseLog.setText(log.toString());
-            if (isSuccess)
-                mResponseLog.setTextColor(getResources().getColor(android.R.color.black));
-            else
-                mResponseLog.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
-        } catch (IOException e) {
-        }
-        //Clear the logcat
-        try {
-            Runtime.getRuntime().exec("logcat -c Ads");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        UnitIdUtils.UnitIdItem unitIdItem = mUnitIdUtils.getNextUnitId();
+
+        //Set current unitid
+        mCurrentUnitId.setText(unitIdItem.getUnitId());
+
+        //Set current ad status as loading to the textview
+        mResponseLog.setText("Loading Ad...");
+        //Make a call to fetch new ad for unitIdItem
+        loadNextAd(unitIdItem);
     }
 
+
+    /**
+     * Make a call to fetch new ad for unitIdItem
+     */
+    private void loadNextAd(UnitIdUtils.UnitIdItem unitIdItem) {
+        mPublisherAdView = new PublisherAdView(this);
+        AdRequest.AdRequestBuilder adRequestBuilder = new AdRequest.AdRequestBuilder(mPublisherAdView, unitIdItem.getUnitId(), unitIdItem.getAdType());
+        AdRequest adRequest = adRequestBuilder.setAdListener(this).build();
+        AdManager.requestAd(adRequest);
+    }
+
+
+    @Override
+    public void AdLoaded(PublisherAdView view) {// Called when ad is loaded successfully
+        mAdContainer.removeAllViews();
+        mAdContainer.addView(view);
+        //Showing logs for ad success in textview
+        mResponseLog.setText(LogUtil.getAdLogs());
+        mResponseLog.setTextColor(getResources().getColor(R.color.black));
+    }
+
+    @Override
+    public void AdFailed(int errorCode) {// Called when ad is failed due to some reason
+        mAdContainer.removeAllViews();
+        //Show error log for ad
+        mResponseLog.setText(LogUtil.getAdLogs());
+        mResponseLog.setTextColor(getResources().getColor(R.color.red));
+    }
 }
