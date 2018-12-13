@@ -1,2 +1,8 @@
 # DFPAdTest
-DFP ads are taking so much time to load this project is for detecting this issue with google Ad team
+
+This is a POC project to identify the Google DFP Ad delay.
+
+## Getting Started
+
+Use Git or checkout with SVN using the below web URL.\
+https://github.com/gajendrakumartwinwal/DFPAdTest.git
