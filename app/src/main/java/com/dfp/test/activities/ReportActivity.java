@@ -1,4 +1,4 @@
-package com.dfp.test;
+package com.dfp.test.activities;
 
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.dfp.test.ads.AdType;
+import com.dfp.test.R;
 import com.dfp.test.database.AdInfo;
 import com.dfp.test.manager.AdAnalyticsManager;
 import com.dfp.test.manager.DBListener;

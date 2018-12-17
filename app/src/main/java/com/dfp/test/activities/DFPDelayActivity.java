@@ -1,4 +1,4 @@
-package com.dfp.test;
+package com.dfp.test.activities;
 
 import android.os.Bundle;
 import android.view.View;
@@ -6,6 +6,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.dfp.test.R;
 import com.dfp.test.ads.AdCallbackListener;
 import com.dfp.test.ads.AdManager;
 import com.dfp.test.ads.AdRequest;
@@ -23,7 +24,7 @@ import com.google.android.gms.ads.doubleclick.PublisherAdView;
  * <p>
  * Ad calls are made using {@link AdManager}
  */
-public class MainActivity extends ActionBarActivity implements View.OnClickListener, RepeatCaller.RepeatCallListener, AdCallbackListener {
+public class DFPDelayActivity extends ActionBarActivity implements View.OnClickListener, RepeatCaller.RepeatCallListener, AdCallbackListener {
 
     private LinearLayout mAdContainer;
 

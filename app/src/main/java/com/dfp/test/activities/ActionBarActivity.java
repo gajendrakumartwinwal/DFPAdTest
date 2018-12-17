@@ -1,10 +1,12 @@
-package com.dfp.test;
+package com.dfp.test.activities;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+
+import com.dfp.test.R;
 
 public abstract class ActionBarActivity extends AppCompatActivity {
 

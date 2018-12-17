@@ -99,8 +99,7 @@ public class UnitIdUtils {
      * @return
      */
     public UnitIdItem getNextUnitId() {
-        adtypecounter++;
-        adtypecounter = adtypecounter % 3;
+        adtypecounter = adtypecounter++ % 3;
         switch (adtypecounter) {
             case 0://MREC
                 return new UnitIdItem(mrecIds[mrecCounter++ % mrecIds.length], AdType.MREC);

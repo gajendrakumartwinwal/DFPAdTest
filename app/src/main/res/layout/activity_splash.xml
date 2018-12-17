@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".SplashActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#e2e2e2"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="DFP Ads take long time to load ad in Live TOI App click below button to reproduce the same" />
+
+        <Button
+            android:id="@+id/btn_dfp_delay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="DFP Delay issue" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="#e2e2e2"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="DFP DFP ad using very large RAM click on below button to reproduce the issue using android profiler" />
+
+        <Button
+            android:id="@+id/btn_dfp_ram"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="DFP RAM issue" />
+    </LinearLayout>
+
+</LinearLayout>
