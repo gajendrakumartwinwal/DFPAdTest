@@ -15,12 +15,12 @@ public class RepeatCaller implements LifecycleObserver {
     /**
      * How many ad calls are made at a time after time out
      */
-    private static int NUMBER_OF_CALLS_TOGGETHER = 1;
+    private static int NUMBER_OF_CALLS_TOGGETHER = 3;
 
     /**
      * Delay in between calls
      */
-    private static int DELAY_IN_MIILI = 2000;
+    private static int DELAY_IN_MIILI = 1000;
     private RepeatCallListener mRepeatCallListener;
     private final Lifecycle mLifecycle;
     private int delayinbetweencalls, numberofcallstogether;

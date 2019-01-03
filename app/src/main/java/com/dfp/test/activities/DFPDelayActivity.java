@@ -79,6 +79,7 @@ public class DFPDelayActivity extends ActionBarActivity implements View.OnClickL
 
     @Override
     public void onTimeExpire() {
+        destroyCurrentAd();
         //Remove all ads if added previously in container
         mAdContainer.removeAllViews();
 
@@ -91,6 +92,12 @@ public class DFPDelayActivity extends ActionBarActivity implements View.OnClickL
         mResponseLog.setText("Loading Ad...");
         //Make a call to fetch new ad for unitIdItem
         loadNextAd(unitIdItem);
+    }
+
+    private void destroyCurrentAd(){
+        if(mAdContainer.getChildCount()>0){
+            ((PublisherAdView)mAdContainer.getChildAt(0)).destroy();
+        }
     }
 
 
